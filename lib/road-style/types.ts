@@ -1,6 +1,19 @@
 export const ROAD_STYLE_SCHEMA_VERSION = 1 as const;
 export const UNITS_LABEL = "Drawing Units" as const;
 
+export const KNOWN_LINETYPES = [
+  "BYLAYER",
+  "CONTINUOUS",
+  "CENTER",
+  "DASHED",
+  "HIDDEN",
+  "DOT",
+  "DASHDOT",
+  "BORDER",
+  "DIVIDE",
+  "PHANTOM",
+] as const;
+
 export type RoadTemplate = "simple-urban-road" | "custom";
 
 export type RoadElementRole =

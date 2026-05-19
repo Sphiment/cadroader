@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getFutureLayerName } from "@/lib/road-style/templates";
-import type { RoadStyleElement } from "@/lib/road-style/types";
+import { KNOWN_LINETYPES, type RoadStyleElement } from "@/lib/road-style/types";
 
 type ElementTableProps = {
   elements: RoadStyleElement[];
@@ -12,18 +12,6 @@ type ElementTableProps = {
 };
 
 const COLOR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 30, 40, 50, 80, 120, 160, 200, 256];
-const LINETYPE_OPTIONS = [
-  "BYLAYER",
-  "CONTINUOUS",
-  "CENTER",
-  "DASHED",
-  "HIDDEN",
-  "DOT",
-  "DASHDOT",
-  "BORDER",
-  "DIVIDE",
-  "PHANTOM",
-];
 
 function formatNumberInputValue(value: number): string {
   return Number.isNaN(value) ? "" : String(value);
@@ -134,12 +122,12 @@ export function ElementTable({
                   <select
                     aria-label="Element linetype"
                     onChange={(event) => onElementChange(element.id, { linetype: event.target.value })}
-                    value={LINETYPE_OPTIONS.includes(element.linetype) ? element.linetype : ""}
+                    value={element.linetype}
                   >
-                    {!LINETYPE_OPTIONS.includes(element.linetype) && element.linetype ? (
+                    {!KNOWN_LINETYPES.some((lt) => lt.toUpperCase() === element.linetype.toUpperCase()) && element.linetype ? (
                       <option value={element.linetype}>{element.linetype}</option>
                     ) : null}
-                    {LINETYPE_OPTIONS.map((lt) => (
+                    {KNOWN_LINETYPES.map((lt) => (
                       <option key={lt} value={lt}>
                         {lt}
                       </option>

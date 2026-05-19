@@ -1,4 +1,4 @@
-import type { RoadStyleProject, ValidationIssue, ValidationResult } from "./types";
+import { KNOWN_LINETYPES, type RoadStyleProject, type ValidationIssue, type ValidationResult } from "./types";
 
 const STYLE_NAME_PATTERN = /^[A-Za-z0-9_-]+$/;
 
@@ -81,18 +81,7 @@ export function validateProject(project: RoadStyleProject): ValidationResult {
     }
 
     const linetype = element.linetype.trim().toUpperCase();
-    const knownSafeLinetypes = new Set([
-      "BYLAYER",
-      "CONTINUOUS",
-      "CENTER",
-      "DASHED",
-      "HIDDEN",
-      "DOT",
-      "DASHDOT",
-      "BORDER",
-      "DIVIDE",
-      "PHANTOM",
-    ]);
+    const knownSafeLinetypes = new Set(KNOWN_LINETYPES);
     if (linetype && !knownSafeLinetypes.has(linetype)) {
       warnings.push(
         createWarning(
