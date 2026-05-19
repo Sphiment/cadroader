@@ -81,7 +81,18 @@ export function validateProject(project: RoadStyleProject): ValidationResult {
     }
 
     const linetype = element.linetype.trim().toUpperCase();
-    const knownSafeLinetypes = new Set(["BYLAYER", "CONTINUOUS", "CENTER", "DASHED", "HIDDEN"]);
+    const knownSafeLinetypes = new Set([
+      "BYLAYER",
+      "CONTINUOUS",
+      "CENTER",
+      "DASHED",
+      "HIDDEN",
+      "DOT",
+      "DASHDOT",
+      "BORDER",
+      "DIVIDE",
+      "PHANTOM",
+    ]);
     if (linetype && !knownSafeLinetypes.has(linetype)) {
       warnings.push(
         createWarning(

@@ -12,7 +12,18 @@ type ElementTableProps = {
 };
 
 const COLOR_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 30, 40, 50, 80, 120, 160, 200, 256];
-const LINETYPE_OPTIONS = ["BYLAYER", "CONTINUOUS", "CENTER", "DASHED", "HIDDEN"];
+const LINETYPE_OPTIONS = [
+  "BYLAYER",
+  "CONTINUOUS",
+  "CENTER",
+  "DASHED",
+  "HIDDEN",
+  "DOT",
+  "DASHDOT",
+  "BORDER",
+  "DIVIDE",
+  "PHANTOM",
+];
 
 function formatNumberInputValue(value: number): string {
   return Number.isNaN(value) ? "" : String(value);
@@ -67,12 +78,6 @@ export function ElementTable({
         </button>
       </div>
 
-      <datalist id="linetype-options">
-        {LINETYPE_OPTIONS.map((linetype) => (
-          <option key={linetype} value={linetype} />
-        ))}
-      </datalist>
-
       <div className="table-wrap">
         <table className="element-table">
           <thead>
@@ -126,13 +131,20 @@ export function ElementTable({
                   </select>
                 </td>
                 <td data-label="Linetype">
-                  <input
+                  <select
                     aria-label="Element linetype"
-                    list="linetype-options"
                     onChange={(event) => onElementChange(element.id, { linetype: event.target.value })}
-                    type="text"
-                    value={element.linetype}
-                  />
+                    value={LINETYPE_OPTIONS.includes(element.linetype) ? element.linetype : ""}
+                  >
+                    {!LINETYPE_OPTIONS.includes(element.linetype) && element.linetype ? (
+                      <option value={element.linetype}>{element.linetype}</option>
+                    ) : null}
+                    {LINETYPE_OPTIONS.map((lt) => (
+                      <option key={lt} value={lt}>
+                        {lt}
+                      </option>
+                    ))}
+                  </select>
                 </td>
                 <td className="layer-preview" data-label="Future layer">
                   {getFutureLayerName(prefix, element.name) || "UNNAMED"}
