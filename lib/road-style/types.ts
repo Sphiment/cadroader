@@ -12,7 +12,7 @@ export const KNOWN_LINETYPES = [
   "BORDER",
   "DIVIDE",
   "PHANTOM",
-] as const;
+];
 
 export type RoadTemplate = "simple-urban-road" | "custom";
 
