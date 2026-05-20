@@ -36,7 +36,7 @@ function createGeneratedElements(values: GuidedValues): RoadStyleElement[] {
     {
       id: "left-road-edge",
       enabled: true,
-      name: "Left Road Edge",
+      name: "Road Edge",
       offset: values.roadHalfWidth,
       color: 7,
       linetype: "CONTINUOUS",
@@ -45,7 +45,7 @@ function createGeneratedElements(values: GuidedValues): RoadStyleElement[] {
     {
       id: "right-road-edge",
       enabled: true,
-      name: "Right Road Edge",
+      name: "Road Edge",
       offset: -values.roadHalfWidth,
       color: 7,
       linetype: "CONTINUOUS",
@@ -54,7 +54,7 @@ function createGeneratedElements(values: GuidedValues): RoadStyleElement[] {
     {
       id: "left-sidewalk-outer-edge",
       enabled: true,
-      name: "Left Sidewalk Outer Edge",
+      name: "Sidewalk Outer Edge",
       offset: sidewalkOuterOffset,
       color: 8,
       linetype: "CONTINUOUS",
@@ -63,7 +63,7 @@ function createGeneratedElements(values: GuidedValues): RoadStyleElement[] {
     {
       id: "right-sidewalk-outer-edge",
       enabled: true,
-      name: "Right Sidewalk Outer Edge",
+      name: "Sidewalk Outer Edge",
       offset: -sidewalkOuterOffset,
       color: 8,
       linetype: "CONTINUOUS",
@@ -118,17 +118,15 @@ export function applyGuidedValues(
   };
 }
 
-export function getFutureLayerName(prefix: string, elementName: string): string {
-  const normalizedName = elementName
-    .trim()
-    .replace(/[^a-zA-Z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .toUpperCase();
-  const normalizedPrefix = prefix
-    .trim()
-    .replace(/[^a-zA-Z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .toUpperCase();
+const INVALID_LAYER_NAME_CHARS = /[<>\/\\":;?*|=`\x00-\x1f]/g;
 
-  return normalizedPrefix ? `${normalizedPrefix}-${normalizedName}` : normalizedName;
+export function sanitizeAutocadLayerName(value: string): string {
+  return value.trim().replace(INVALID_LAYER_NAME_CHARS, "_");
+}
+
+export function getFutureLayerName(prefix: string, elementName: string): string {
+  const sanitizedPrefix = sanitizeAutocadLayerName(prefix);
+  const sanitizedName = sanitizeAutocadLayerName(elementName);
+
+  return sanitizedPrefix ? `${sanitizedPrefix}-${sanitizedName}` : sanitizedName;
 }

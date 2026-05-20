@@ -7,6 +7,7 @@ import { ElementTable } from "./element-table";
 import { GuidedBuilder } from "./guided-builder";
 import { HeaderBar } from "./header-bar";
 import { ValidationPanel } from "./validation-panel";
+import { generateLisp, getLispFilename, validateLispExport } from "@/lib/road-style/lisp";
 import { generateMln, getMlnFilename } from "@/lib/road-style/mln";
 import { parseProjectJson, serializeProject } from "@/lib/road-style/project-json";
 import { applyGuidedValues, createSimpleUrbanRoadProject } from "@/lib/road-style/templates";
@@ -62,7 +63,9 @@ export function RoadStyleApp() {
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const validation = useMemo(() => validateProject(project), [project]);
+  const lispValidation = useMemo(() => validateLispExport(project), [project]);
   const canDownloadExport = validation.errors.length === 0;
+  const canDownloadLisp = canDownloadExport && lispValidation.errors.length === 0;
 
   const updateProject = (patch: Partial<RoadStyleProject>) => {
     setProject((currentProject) => ({ ...currentProject, ...patch }));
@@ -130,6 +133,14 @@ export function RoadStyleApp() {
     downloadTextFile(getMlnFilename(project.styleName), generateMln(project), "text/plain");
   };
 
+  const handleDownloadLisp = () => {
+    if (!canDownloadLisp) {
+      return;
+    }
+
+    downloadTextFile(getLispFilename(project.styleName), generateLisp(project), "text/plain");
+  };
+
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
@@ -168,9 +179,11 @@ export function RoadStyleApp() {
     <main className="app-shell">
       <HeaderBar
         canDownloadJson={canDownloadExport}
+        canDownloadLisp={canDownloadLisp}
         canDownloadMln={canDownloadExport}
         fileInputRef={fileInputRef}
         onDownloadJson={handleDownloadJson}
+        onDownloadLisp={handleDownloadLisp}
         onDownloadMln={handleDownloadMln}
         onImportClick={handleImportClick}
         onImportJson={handleImportJson}
@@ -188,7 +201,7 @@ export function RoadStyleApp() {
             onValuesChange={handleGuidedValuesChange}
             values={project.guidedValues}
           />
-          <ValidationPanel importError={importError} validation={validation} />
+          <ValidationPanel importError={importError} lispValidation={lispValidation} validation={validation} />
         </div>
         <CrossSectionPreview elements={project.elements} unitsLabel={project.unitsLabel} />
       </div>

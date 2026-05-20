@@ -3,6 +3,7 @@ import {
   applyGuidedValues,
   createSimpleUrbanRoadProject,
   getFutureLayerName,
+  sanitizeAutocadLayerName,
 } from "@/lib/road-style/templates";
 
 describe("road style templates", () => {
@@ -15,10 +16,10 @@ describe("road style templates", () => {
     expect(project.guidedValues).toEqual({ roadHalfWidth: 3.5, sidewalkWidth: 2 });
     expect(project.elements.map((element) => [element.name, element.offset])).toEqual([
       ["Road Centerline", 0],
-      ["Left Road Edge", 3.5],
-      ["Right Road Edge", -3.5],
-      ["Left Sidewalk Outer Edge", 5.5],
-      ["Right Sidewalk Outer Edge", -5.5],
+      ["Road Edge", 3.5],
+      ["Road Edge", -3.5],
+      ["Sidewalk Outer Edge", 5.5],
+      ["Sidewalk Outer Edge", -5.5],
     ]);
   });
 
@@ -39,10 +40,10 @@ describe("road style templates", () => {
     expect(updated.guidedValues).toEqual({ roadHalfWidth: 4, sidewalkWidth: 1.5 });
     expect(updated.elements.map((element) => [element.name, element.offset])).toEqual([
       ["Road Centerline", 0],
-      ["Left Road Edge", 4],
-      ["Right Road Edge", -4],
-      ["Left Sidewalk Outer Edge", 5.5],
-      ["Right Sidewalk Outer Edge", -5.5],
+      ["Road Edge", 4],
+      ["Road Edge", -4],
+      ["Sidewalk Outer Edge", 5.5],
+      ["Sidewalk Outer Edge", -5.5],
       ["Custom Drainage Line", 7.25],
     ]);
   });
@@ -58,15 +59,25 @@ describe("road style templates", () => {
     expect(updated.guidedValues).toEqual({ roadHalfWidth: 4, sidewalkWidth: 1.5 });
     expect(updated.elements.map((element) => [element.name, element.offset])).toEqual([
       ["Road Centerline", 0],
-      ["Left Road Edge", 4],
-      ["Right Road Edge", -4],
-      ["Left Sidewalk Outer Edge", 5.5],
-      ["Right Sidewalk Outer Edge", -5.5],
+      ["Road Edge", 4],
+      ["Road Edge", -4],
+      ["Sidewalk Outer Edge", 5.5],
+      ["Sidewalk Outer Edge", -5.5],
     ]);
   });
 
-  it("creates a readable future layer name from prefix and element name", () => {
-    expect(getFutureLayerName("C", "Left Sidewalk Outer Edge")).toBe("C-LEFT-SIDEWALK-OUTER-EDGE");
-    expect(getFutureLayerName("", "Road Centerline")).toBe("ROAD-CENTERLINE");
+  it("creates a readable AutoCAD layer preview from prefix and element name", () => {
+    expect(getFutureLayerName("C", "Road Edge")).toBe("C-Road Edge");
+    expect(getFutureLayerName("", "Road Centerline")).toBe("Road Centerline");
+    expect(getFutureLayerName("", "Drainage/Edge?")).toBe("Drainage_Edge_");
+  });
+
+  it("sanitizes AutoCAD layer names deterministically", () => {
+    expect(sanitizeAutocadLayerName('Road<Main>/Edge?')).toBe("Road_Main__Edge_");
+    expect(sanitizeAutocadLayerName('Road\\Main"Edge:Test;A*B|C=D`E')).toBe(
+      "Road_Main_Edge_Test_A_B_C_D_E"
+    );
+    expect(sanitizeAutocadLayerName("Road\x00Main\x1fEdge")).toBe("Road_Main_Edge");
+    expect(sanitizeAutocadLayerName("  Road Edge  ")).toBe("Road Edge");
   });
 });
