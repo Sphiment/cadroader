@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("edits a road style and downloads MLN", async ({ page }) => {
+test("edits a road style and downloads MLN and LSP", async ({ page }) => {
   await page.goto("/");
 
   await expect(
@@ -13,18 +13,27 @@ test("edits a road style and downloads MLN", async ({ page }) => {
   await page.getByLabel("Sidewalk width").fill("1.5");
 
   await expect(page.getByLabel("Road cross-section preview")).toContainText(
-    "Left Road Edge: 4"
+    "Road Edge: 4"
   );
   await expect(page.getByLabel("Road cross-section preview")).toContainText(
-    "Left Sidewalk Outer Edge: 5.5"
+    "Sidewalk Outer Edge: 5.5"
   );
 
   await page.getByLabel("Future layer prefix").fill("C");
-  await expect(page.getByText("C-LEFT-SIDEWALK-OUTER-EDGE")).toBeVisible();
+  const sidewalkLayerCells = page.locator(".layer-preview", {
+    hasText: "C-Sidewalk Outer Edge",
+  });
+  await expect(sidewalkLayerCells).toHaveCount(2);
 
-  const download = page.waitForEvent("download");
+  const mlnDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download MLN" }).click();
-  const file = await download;
+  const mlnFile = await mlnDownload;
 
-  expect(file.suggestedFilename()).toBe("ROAD_SIMPLE_URBAN.mln");
+  expect(mlnFile.suggestedFilename()).toBe("ROAD_SIMPLE_URBAN.mln");
+
+  const lspDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download LSP" }).click();
+  const lspFile = await lspDownload;
+
+  expect(lspFile.suggestedFilename()).toBe("ROAD_SIMPLE_URBAN.lsp");
 });

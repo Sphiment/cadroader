@@ -4,6 +4,7 @@ type HeaderBarProps = {
   styleName: string;
   prefix: string;
   canDownloadJson: boolean;
+  canDownloadLisp: boolean;
   canDownloadMln: boolean;
   fileInputRef: RefObject<HTMLInputElement | null>;
   onStyleNameChange: (value: string) => void;
@@ -11,6 +12,7 @@ type HeaderBarProps = {
   onImportClick: () => void;
   onImportJson: (file: File | null) => void;
   onDownloadJson: () => void;
+  onDownloadLisp: () => void;
   onDownloadMln: () => void;
 };
 
@@ -18,6 +20,7 @@ export function HeaderBar({
   styleName,
   prefix,
   canDownloadJson,
+  canDownloadLisp,
   canDownloadMln,
   fileInputRef,
   onStyleNameChange,
@@ -25,6 +28,7 @@ export function HeaderBar({
   onImportClick,
   onImportJson,
   onDownloadJson,
+  onDownloadLisp,
   onDownloadMln,
 }: HeaderBarProps) {
   return (
@@ -81,6 +85,14 @@ export function HeaderBar({
             type="button"
           >
             Download MLN
+          </button>
+          <button
+            className="button button-primary"
+            disabled={!canDownloadLisp}
+            onClick={onDownloadLisp}
+            type="button"
+          >
+            Download LSP
           </button>
         </div>
       </div>

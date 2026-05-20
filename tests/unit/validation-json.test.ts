@@ -22,8 +22,8 @@ describe("project validation", () => {
     expect(result.errors.map((issue) => issue.message)).toEqual([
       "Style name can use only letters, numbers, underscores, and hyphens.",
       "Road Centerline has an invalid numeric offset.",
-      "Left Road Edge has an invalid AutoCAD color index.",
-      "Right Road Edge needs a linetype.",
+      "Road Edge has an invalid AutoCAD color index.",
+      "Road Edge needs a linetype.",
     ]);
   });
 
@@ -46,7 +46,7 @@ describe("project validation", () => {
     const result = validateProject(project);
 
     expect(result.errors.map((issue) => issue.message)).toContain(
-      "Left Road Edge has an invalid numeric offset."
+      "Road Edge has an invalid numeric offset."
     );
   });
 
